@@ -1,15 +1,11 @@
-// import Navigation from "@/components/Navigation";
+
+// import Navigation from "@/components/HeaderAdmin";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import 'primereact/resources/themes/saga-blue/theme.css'; // Tema de PrimeReact
-import 'primereact/resources/primereact.min.css'; // Estilos básicos de PrimeReact
-//import 'primeicons/primeicons.css'; // Iconos de PrimeIcons (opcional)
+//  import 'primereact/resources/themes/saga-blue/theme.css'; // Tema de PrimeReact
+//  import 'primereact/resources/primereact.min.css'; // Estilos básicos de PrimeReact
+//  import 'primeicons/primeicons.css'; // Iconos de PrimeIcons
 
-// Importar estilos de componentes específicos
-// import 'primereact/resources/themes/saga-blue/sidebar.css'; // Estilos del Sidebar
-// import 'primereact/resources/themes/saga-blue/menubar.css'; // Estilos del Menubar
-// import 'primereact/resources/themes/saga-blue/tabview.css'; // Estilos del TabView
-// Agrega más importaciones de estilos según los componentes que utilices
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -21,11 +17,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css" />
+        {/* <link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css" /> */}
+        {/* <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'/> */}
+    
       </head>
-      <body className={inter.className}>
-        {/* <Navigation />  */}
-        <div className="container p-4">
+      <body 
+       className={inter.className}
+      >
+         {/* <Navigation />  */}
+        <div>
         {children}
         </div>
         </body>

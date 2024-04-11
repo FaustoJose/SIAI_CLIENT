@@ -1,13 +1,19 @@
-import Navigation from "@/components/Navigation";
+import Navigation from "@/components/HeaderClient";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 const clienteLayout = ({ children }) => {
     return (
+      <> 
+        
       <div>
-        {/* Aquí puedes agregar el encabezado, pie de página u otros elementos comunes */}
-        <header><Navigation /></header>
+        
+        <Navigation />
         <main>{children}</main>
         
       </div>
+      </>
     );
   };
   

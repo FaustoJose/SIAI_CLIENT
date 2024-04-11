@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/* @import "~bootstrap/dist/css/bootstrap.min.css"; */
+ /* *{
+   padding:0; 
+   margin:0;
+   box-sizing: border-box;
+   
+}  */
+
+*:not([class^="p-"]) {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+ 
+
+
+body{
+    background-color: #eee;
+   font-family: 'Roboto', sans-serif ;
+}
+
+
+
+/* :not([class^="sidebar_"],[class^="p-"]) {
+    background-color: #f3f4f6;
+} */
+
+.layout{
+    display: flex;
+    height: 100vh;
+    gap: 1rem; 
+    background-color: #fff;
+}
+
+.sidebar_wrapper{
+    position: relative;
+    border-radius: 0.8rem;
+    border: 1px solid #e5e7eb;
+}
+
+.sidebar {
+    width: 17rem;
+    height: 100%;
+    background-color: #fff;
+    padding: 1rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sidebar_top{
+    width: max-content;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar_logo{
+    width: 3.4rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border-radius:1rem;
+}
+
+.sidebar_list{
+    list-style: none;
+}
+
+.sidebar_link{
+    display: inline-block;
+    font-size: 1rem;
+    text-decoration: none;
+    color: #000;
+    padding: 0.8rem 1rem;
+    display: flex;
+    background-color: #f3f4f6;
+    margin-bottom: 1rem;
+    border-radius: 0.8rem;
+}
+
+.sidebar_icon{
+    
+    font-size: 1.2rem;
+    display: inline-block;
+}
+.sidebar_name{
+    margin-left: 0.6rem;
+}
+
+.sidebar_logo-name{
+font-size: 1.2rem;
+font-weight: 600;
+}
+
+/* Hovers ...........................*/
+.sidebar_link:hover{
+    display: inline-block;
+    font-size: 1rem;
+    text-decoration: none;
+    color: #000;
+    padding: 0.8rem 1rem;
+    display: flex;
+    background-color: #fff;
+    margin-bottom: 1rem;
+    border-radius: 0.8rem;
+}
+
+.sidebar_items:hover{
+    background-color: #f0f0f0;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    border-radius: 0.8rem;
+}
+/* ................................ */
+.sidebar_btn {
+    position: absolute;
+    right: 0;
+    top: 4.7rem;
+    border: none;
+    background-color: #fff;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transform: translateX(50%);
+    font-size: 1.1rem;
+}
+
+[data-collapse="true"]{
+   width: 5.3rem;
+
+}
+
+[data-collapse="true"] .sidebar_name,
+[data-collapse="true"] .sidebar_logo-name {
+    display: none;
+ }
+
+
+
+
+
+ .card {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+/* .custom-datatable .p-datatable-tbody > tr {
+    margin-bottom: 10px; 
+  }
+  
+  
+  .custom-datatable .p-datatable-tbody > tr > td {
+    padding-right: 10px; 
+  } */
+
+
+ 
