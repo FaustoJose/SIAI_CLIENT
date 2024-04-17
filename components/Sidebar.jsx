@@ -45,7 +45,7 @@ const Sidebar = () => {
             icon:AiFillProfile,
         },
         {
-            name:"Categorias",
+            name:"Categorías",
             href:"/Category",
             icon:MdCategory,
         }

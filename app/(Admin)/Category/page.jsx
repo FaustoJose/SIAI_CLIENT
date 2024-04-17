@@ -170,7 +170,7 @@ const ProfesionPage = () => {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Nuevo" icon="pi pi-plus" severity="success" onClick={openNew} />
                
             </div>
         );
@@ -212,10 +212,10 @@ const ProfesionPage = () => {
 
     const header = (
         <div className="flex flex-wrap gap-5 align-items-center justify-content-between">
-            <h4 className="m-2">Categorias</h4>
+            <h4 className="m-2">Categorías</h4>
             <span className="p-input-icon-left " >
                 <i className="pi pi-search" style={{marginTop:'-7px'}}/>
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Buscar..." />
             </span>
         </div>
     );
@@ -244,13 +244,13 @@ const ProfesionPage = () => {
                 <DataTable ref={dt} value={Datas} 
                 // selection={selectedDatas} 
                 // onSelectionChange={(e) => setSelectedDatas(e.value)}
-                        dataKey="category_id"  paginator rows={3} rowsPerPageOptions={[5, 10, 25]}
+                        dataKey="category_id"  paginator rows={6} rowsPerPageOptions={[5,6, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Datas" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Categorías" globalFilter={globalFilter} header={header}>
                     
                     
                     <Column field="category_id" header="Id" sortable style={{ minWidth: '16rem' }} body={idBodyTemplate}></Column>
-                    <Column field="description" header="Categorias" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="description" header="Categorías" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </div>
@@ -271,13 +271,13 @@ const ProfesionPage = () => {
                
             </Dialog>
 
-            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
+            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirmar" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem',marginRight:'1rem'}} />
                     
                     {Data && (
                         <span>
-                            Esta seguro de eliminar este evento <b>{Data.name}</b>?
+                            ¿Seguro que quieres eliminar esta Categoría: <b>{Data.description}</b>?
                         </span>
                     )}
                 </div>

@@ -3,16 +3,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import useGetById from '@/components/RestHooks/getById';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Contador from '@/components/contador/contador';
 
+import { ScrollPanel } from 'primereact/scrollpanel';
+//..........................................
+import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
+import { FaStop } from "react-icons/fa";
+//..........................................
 
 const ListadoPage = ({params}) => {
   const [names, setNames] = useState([]);
-  const [time02, setTime02] = useState(3);
-  const [currentIndex, setCurrentIndex] = useState(null);
-  const [isRunning, setIsRunning] = useState(true);
+  const [contador, setContador] = useState(3);
+    let [currentIndex, setCurrentIndex] = useState(0);
+  const [isRunning, setIsRunning] = useState(false); // Cambiado a false inicialmente
   const [name, setName] = useState([]);
+  const [lanzamiento, setLanzamiento] = useState(null); 
+
+
   const endPoint = 'ParticipantesEvento/Event/';
   const { data: datas } = useGetById(endPoint, params.id);
+  const endPoint02 = 'RegistroEventos/';
+  const { data: Evento } = useGetById(endPoint02, params.id); 
 
   const canvasRef = useRef(null);
 
@@ -29,7 +41,7 @@ const ListadoPage = ({params}) => {
     const voz = new SpeechSynthesisUtterance();
     voz.lang="es-US";
     voz.volume = 5;
-    voz.pitch = 10.9;
+    voz.pitch = 0.9;
     voz.rate = 1;
     const timer=setInterval(()=>{
         const voices=speechSynthesis.getVoices();
@@ -39,7 +51,7 @@ const ListadoPage = ({params}) => {
             clearInterval(timer)
         }
          //console.log(voices)
-    },1000)
+    },2000)
 
     if(name!=''){
         voz.text = name;
@@ -53,33 +65,55 @@ const ListadoPage = ({params}) => {
 
 
 
-  const handleSegundosChange = event => {
-    setTime02(parseInt(event.target.value));
-    console.log('tiempo',event.target.value)
-  };
+
   
+//....................................
+let intervalId;
+const datos = () => {
+  console.log('pausa', currentIndex);
+  const name1 = names[currentIndex];
+  console.log('datos de name1', name1);
+  setCurrentIndex(currentIndex++); // Incrementar currentIndex
+  //setName((prevName) => [...prevName, name1.participant_name]);
+  decir(name1.participant_name);
 
-  const toggleDisplayingNames = () => {
-    setIsRunning(false);
-    setName([]);
-
-    names.forEach((name1, index) => {
-      setTimeout(() => {
-        setCurrentIndex(index);
-        setName(prevName => [...prevName, name1.participant_name]);
-        decir(name1.participant_name);
-        if (names.length - 1 === index) {
-          setIsRunning(true);
-        }
-      }, (index + 1) * time02 * 1000);
-    });
-  };
-
-  const cancelar = () => {
+  if (names.length - 1 === currentIndex) {
+    setIsRunning(false); // Si llegamos al final, detener el intervalo
+  }
+  console.log('valor de names y currentIndex',names.length,currentIndex)
+  if (names.length <= currentIndex) {
+    setCurrentIndex(0)
+    clearInterval(intervalId);
     
-    window.location.reload();
-  };
+  }
+};
 
+const DisplayNames = (shouldStart) => {
+  if (shouldStart) {
+    setIsRunning(true);
+   
+     intervalId = setInterval(datos,contador * 1000); // Iniciar el intervalo
+    setLanzamiento(intervalId); // Almacenar el intervalo en el estado
+  } else {
+    setIsRunning(false);
+    clearInterval(lanzamiento); // Detener el intervalo
+  }
+};
+
+const cancelar = () => {
+  setIsRunning(false);
+  clearInterval(lanzamiento);
+  setCurrentIndex(currentIndex+1)
+};
+
+const detener = () => {
+  clearInterval(lanzamiento);
+  setCurrentIndex(0)
+  setIsRunning(false)
+};
+
+  
+//.....................................
   const onChange = async (event) => {
     const audioFile = event.target.files[0];
     const url = URL.createObjectURL(audioFile);
@@ -127,45 +161,55 @@ const ListadoPage = ({params}) => {
     analyser.fftSize = 256;
     return analyser;
   };
+  //.................................................
 
   return (
     <div className='container card' style={{ border: '0px solid black', height: '20rem' }}>
-      <div className='col-12 card' style={{ border: '0px solid black', marginBottom: '2rem',backgroundColor:'#D6DBDF' }}>
-        <h1>Evento:</h1>
+      <div className='col-12 card' style={{ border: '0px solid black', marginBottom: '1rem',backgroundColor:'#D6DBDF' }}>
+        <h1 >Evento: {Evento.event_name}</h1>
       </div>
       <div className='col-12'>
         <div className='row'>
           <div className='col-8 card' style={{ border: '0px solid black', minHeight: '10rem' }}>
             <div className='card' style={{ border: '0px solid black', height: '4rem', width: '100%',backgroundColor:'#F8F9F9',textAlign: 'center' }}>
-              <h2>Precentacion  de Participantes</h2>
+              <h2>Presentación de Participantes</h2>
             </div>
             <div className='container row' style={{ border: '0px solid black', minHeight: '10rem', width: '100%' }}>
               <div className='card col-6'  style={{ border: '0px solid black'}}>
                 <div className='card' style={{ border: '0px solid black',  textAlign: 'center', lineHeight: '2rem',backgroundColor:'#F8F9F9' }}>
                   <p style={{ marginTop: '-0.1rem',color:'#000' }}>Listado de Participantes</p>
                 </div>
+                <ScrollPanel style={{ width: '100%', height: '30rem' }}>
                 {names.map((name, index) => {
                   return (
                     <div key={index} className='card' style={{border: '0px solid black',   textAlign: 'center', lineHeight: '2rem' }}>
-                      <p style={{ marginTop: '-0.1rem' }}>{name.participant_name}</p>
+                      <div style={{ marginTop: '-0.1rem', fontWeight: name.participant_name === names[currentIndex]?.participant_name ? 'bold' : 'normal' }}>{name.participant_name}</div>
                     </div>
                   );
                 })}
+                </ScrollPanel>
               </div>
               <div className='col-1 card' style={{ border: '0px solid black'}}></div>
               <div className='col-5 card' style={{ minHeight: '10rem',border: '0px solid black' }}>
                 <div className='card'>
-                  <label>Tiempo de LLamada en segundos:</label>
-                  <Form.Control
-                    type="number"
-                    style={{ height: '40px' }}
-                    onChange={handleSegundosChange}
-                    value={time02}
-                  />
+                  <label className='card text-center'>TIEMPO</label>
+                  <Contador contador={contador} setContador={setContador}/>
                 </div>
                 <div className='card'>
-                  <label>Iniciar Precentacion:</label>
-                  <Button onClick={isRunning ? toggleDisplayingNames : cancelar}>{!isRunning ? 'Detener' : 'Iniciar'}</Button>
+                  <label className='card text-center'>CONTROL</label>
+                   <div className='row'>
+                      <div className='col-4 text-center'>
+                      <Button variant="outline-primary" disabled={isRunning} onClick={DisplayNames}><FaPlay /></Button>
+                      </div>
+                      <div className='col-4 text-center'>
+                      <Button variant="outline-primary" disabled={!isRunning} onClick={cancelar}><FaPause /></Button>
+                      </div>
+                      <div className='col-4 text-center'>
+                      <Button variant="outline-primary" onClick={detener}><FaStop /></Button>
+                      </div>
+                   </div>
+                  
+                 
                 </div>
               </div>
             </div>
@@ -175,7 +219,7 @@ const ListadoPage = ({params}) => {
               <img src='https://acadmedia.itsc.edu.do/logos/logo_login.png' />
             </div>
             <div className="col-12 card" style={{ border: '0px solid black', height: '2rem', textAlign: 'center', lineHeight: '2rem',backgroundColor:'#D6DBDF' }}>
-              <p style={{ marginTop: '-1.1rem' }}>{names[currentIndex]?.participant_name}</p>
+              <div style={{ marginTop: '-1.1rem' }}>{names[currentIndex]?.participant_name}</div>
               
             </div>
             <div className="col-12 card">

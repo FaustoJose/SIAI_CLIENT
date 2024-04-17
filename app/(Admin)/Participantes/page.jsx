@@ -128,7 +128,7 @@ useEffect(() => {
                     if (index !== -1) {
                         _Datas[index] = { ..._Data };
                     }
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Updated', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participante Actualizado', life: 3000 });
                 } catch (error) {
                     console.error('Error al enviar los datos:', error);
                 }
@@ -139,7 +139,7 @@ useEffect(() => {
                     const data = await usePost(endPoint, _Data);
                     console.log('Datos enviados correctamente:', data);
                     _Datas = [..._Datas, data ];
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Created', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participante Creado', life: 3000 });
                 } catch (error) {
                     console.error('Error al enviar los datos:', error);
                 }
@@ -177,12 +177,12 @@ useEffect(() => {
         try {
            
             const data = await useDelete(endPoint,Data.participant_id)
-            console.log('Datos eliminados correctamente:', data);
+            //console.log('Datos eliminados correctamente:', data);
             let _Datas = Datas.filter((val) => val.participant_id !== data.participant_id);
             setDatas(_Datas);
             setDeleteDataDialog(false);
             setData(emptyData);
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Deleted', life: 3000 });
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participante Borrado', life: 3000 });
         } catch (error) {
             console.error('Error al enviar los datos:', error);
         }
@@ -238,7 +238,7 @@ useEffect(() => {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Nuevo" icon="pi pi-plus" severity="success" onClick={openNew} />
                
             </div>
         );
@@ -311,20 +311,20 @@ useEffect(() => {
             <h4 className="m-2">Participantes</h4>
             <span className="p-input-icon-left " >
                 <i className="pi pi-search" style={{marginTop:'-7px'}}/>
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Buscar..." />
             </span>
         </div>
     );
     const DataDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveData} />
+            <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Guardar" icon="pi pi-check" onClick={saveData} />
         </React.Fragment>
     );
     const deleteDataDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteDataDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteData} />
+            <Button label="Si" icon="pi pi-check" severity="danger" onClick={deleteData} />
         </React.Fragment>
     );
     //.................................
@@ -393,9 +393,9 @@ const profOptionTemplate = (option) => {
                 ></Toolbar>
 
                 <DataTable ref={dt} value={Datas} 
-                        dataKey="participant_id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                        dataKey="participant_id"  paginator rows={6} rowsPerPageOptions={[5,6, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Datas" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Participantes" globalFilter={globalFilter} header={header}>
                     
                     
                     <Column field="participant_id" header="Id" sortable style={{ minWidth: '8rem' }} body={idBodyTemplate}></Column>
@@ -449,13 +449,13 @@ const profOptionTemplate = (option) => {
                
             </Dialog>
 
-            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
+            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirmar" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem',marginRight:'1rem'}} />
                     
                     {Data && (
                         <span>
-                            Esta seguro de eliminar este evento <b>{Data.name}</b>?
+                            ¿Seguro que quieres eliminar a este participante: <b>{Data.participant_name}</b>?
                         </span>
                     )}
                 </div>

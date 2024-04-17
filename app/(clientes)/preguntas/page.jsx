@@ -1,10 +1,10 @@
 "use client"
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+//import { useState } from 'react';
+//import Button from 'react-bootstrap/Button';
+//import Modal from 'react-bootstrap/Modal';
 import useGet from '@/components/RestHooks/get';
 import Pregunta from '@/components/peguntas/pregunta';
-import FAQPage from '@/components/Buscador/FAQP';
+//import FAQPage from '@/components/Buscador/FAQP';
 function PreguntasPage() {
  
   const endPoint = 'Preguntas/';

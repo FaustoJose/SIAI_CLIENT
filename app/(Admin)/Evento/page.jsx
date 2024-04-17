@@ -125,7 +125,7 @@ const EventoPage = () => {
                     if (index !== -1) {
                         _Datas[index] = { ..._Data };
                     }
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Updated', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Evento Actualizado', life: 3000 });
                 } catch (error) {
                     console.error('Error al enviar los datos:', error);
                 }
@@ -136,7 +136,7 @@ const EventoPage = () => {
                     const data = await usePost(endPoint, _Data);
                     console.log('Datos enviados correctamente:', data);
                     _Datas = [..._Datas, data ];
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Created', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Evento Creado', life: 3000 });
                 } catch (error) {
                     console.error('Error al enviar los datos:', error);
                 }
@@ -180,7 +180,7 @@ const EventoPage = () => {
                     // Aquí puedes hacer lo que necesites con cada nombre
                     });
 
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Created', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participantes Guardados', life: 3000 });
 
                 };
             
@@ -215,7 +215,7 @@ const EventoPage = () => {
             setDatas(_Datas);
             setDeleteDataDialog(false);
             setData(emptyData);
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Data Deleted', life: 3000 });
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Evento Borrado', life: 3000 });
         } catch (error) {
             console.error('Error al enviar los datos:', error);
         }
@@ -230,7 +230,7 @@ const EventoPage = () => {
         setDatas(_Datas);
         setDeleteDatasDialog(false);
         setSelectedDatas(null);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Datas Deleted', life: 3000 });
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Evento Borrado', life: 3000 });
     };
 
  
@@ -263,7 +263,7 @@ const EventoPage = () => {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Nuevo" icon="pi pi-plus" severity="success" onClick={openNew} />
                
             </div>
         );
@@ -349,28 +349,28 @@ const EventoPage = () => {
             <h4 className="m-2">Eventos</h4>
             <span className="p-input-icon-left " >
                 <i className="pi pi-search" style={{marginTop:'-7px'}}/>
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Buscar..." />
             </span>
         </div>
     );
     const DataDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveData} />
+            <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Guardar" icon="pi pi-check" onClick={saveData} />
         </React.Fragment>
     );
 
     const FileDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideFileDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveFile} />
+            <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideFileDialog} />
+            <Button label="Guardar" icon="pi pi-check" onClick={saveFile} />
         </React.Fragment>
     );
 
     const deleteDataDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteDataDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteData} />
+            <Button label="Si" icon="pi pi-check" severity="danger" onClick={deleteData} />
         </React.Fragment>
     );
     const deleteDatasDialogFooter = (
@@ -419,9 +419,9 @@ const EventoPage = () => {
                 <DataTable ref={dt} value={Datas} 
                 // selection={selectedDatas} 
                 // onSelectionChange={(e) => setSelectedDatas(e.value)}
-                        dataKey="event_id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                        dataKey="event_id"  paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Datas" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Eventos" globalFilter={globalFilter} header={header}>
                     
                     
                     <Column field="event_id" header="Id" sortable style={{ minWidth: '16rem' }} body={idBodyTemplate}></Column>
@@ -447,7 +447,7 @@ const EventoPage = () => {
                 </div>
                 <div className="field">
                     <label htmlFor="event_location" className="font-bold">
-                    Ubicación:
+                        Ubicación:
                     </label>
                     <div className="card flex justify-content-center">
                         <InputTextarea id="event_location" value={Data.event_location} onChange={(e) => onInputChange(e, 'event_location')} required autoFocus rows={4} cols={20} className={classNames({ 'p-invalid': submitted && !Data.event_location })}/>
@@ -474,7 +474,7 @@ const EventoPage = () => {
                 
                 <div className="field">
                     <label htmlFor="event_name" className="font-bold">
-                        Cargar Achivo con los nombres de los participantes:
+                        {`Cargar Archivo (.txt) con los nombres de los participantes:`}
                     </label>
                     <div className="card flex justify-content-center">
                         <input type="file"   accept=".txt"  ref={fileInputRef} id="event_name"   required autoFocus  />
@@ -483,10 +483,10 @@ const EventoPage = () => {
                 </div>
                 <div className="field">
                     <label htmlFor="participant_status" className="font-bold">
-                        Profesion:
+                       Profesión:
                     </label>
                     <div className="card flex justify-content-center">
-                        <Dropdown value={prof.description} onChange={(e) => SelectProfChange(e.value,'profetion_id')} options={optionProf} optionLabel="name" placeholder="Select a Profetion" 
+                        <Dropdown value={prof.description} onChange={(e) => SelectProfChange(e.value,'profetion_id')} options={optionProf} optionLabel="name" placeholder="Selecciona una Profesión" 
                             filter valueTemplate={selectedProfTemplate} itemTemplate={profOptionTemplate} className="w-full md:w-14rem" />
                     </div> 
                     {submitted && !prof.description && <small className="p-error">La Profecion es requerido.</small>}
@@ -496,13 +496,13 @@ const EventoPage = () => {
             </Dialog>
             {/* //............................................................................. */}
 
-            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
+            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirmar" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem',marginRight:'1rem'}} />
                     
                     {Data && (
                         <span>
-                            Esta seguro de eliminar este evento <b>{Data.name}</b>?
+                            ¿Seguro que quieres eliminar a este evento: <b>{Data.event_name}</b>?
                         </span>
                     )}
                 </div>

@@ -1,7 +1,6 @@
 "use client";
 import useGet from "@/components/RestHooks/get";
 import { useRouter } from "next/navigation";
-import { Tag } from 'primereact/tag';
 
 const EventPage = () => {
     const endPoint = 'RegistroEventos/';
@@ -36,8 +35,8 @@ const EventPage = () => {
             `}
             </style>
 
-            <div className="" style={{ border: '0px solid black',minWidth:'100%', height:'45rem',margin:'1%' }}>
-                <div className="card" style={{backgroundColor:'#F8F9F9'}}>
+            <div className="card" style={{ border: '0px solid black',width:'100%', height:'auto',margin:'1%' }}>
+            <div className='col-12  card' style={{  height:'auto', marginBottom: '1rem',backgroundColor:'#D6DBDF' }}>
                           <h4>Listados de Eventos</h4>
                 </div>
                   <div className="col-12 " >
@@ -45,23 +44,23 @@ const EventPage = () => {
                     <div className="row">
                     {
                         data.map((Event)=>(
-                        <div key={Event.event_id} style={{ border: '0px solid black',margin:'1%',backgroundColor:'#F8F9F9',cursor: 'pointer' }}
-                        className="col-12 col-md-3 col-lg-3 card shadow-on-hover"
+                        <div key={Event.event_id} 
+                        className="col-12 col-md-3 col-lg-4 text-center"
                         onClick={()=>{
                             router.push(`/ListadoEvento/${Event.event_id}`)
                         }}>
-                            <div>
+                            <div className="card shadow-on-hover" style={{ cursor: 'pointer' }}>
                                 <div className='card'
-                                style={{border: '0px solid black',backgroundColor:'#F8F9F9' }}>
+                                style={{border: '0px solid black',backgroundColor:'#fff' }}>
                                     <h5>{Event.event_name}</h5>
                                 </div>
                                 <hr/>
                                 
-                                <div className='card' style={{border: '0px solid black', marginTop: '1rem', backgroundColor:'#F8F9F9' }}>
+                                <div className='card' style={{border: '0px solid black', marginTop: '1rem', backgroundColor:'#fff' }}>
                                     <p>{Event.event_location}</p>
                                 </div>
 
-                                <div className='card' style={{border: '0px solid black',backgroundColor:'#F8F9F9' }}>
+                                <div className='card' style={{border: '0px solid black',backgroundColor:'#fff' }}>
                                     <p>{fechaBodyTemplate(Event.event_date)}</p> 
                                 </div>
                             </div>
@@ -69,7 +68,9 @@ const EventPage = () => {
                         </div>
                         ))
                     }
+                    <hr/>
                     </div>
+                   
                 </div>
             </div>
         </div>

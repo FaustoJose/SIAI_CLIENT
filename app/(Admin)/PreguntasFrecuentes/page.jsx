@@ -208,7 +208,7 @@ const PreguntasPage = () => {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Nuevo" icon="pi pi-plus" severity="success" onClick={openNew} />
                
             </div>
         );
@@ -267,20 +267,20 @@ const PreguntasPage = () => {
             <h4 className="m-2">Preguntas frecuentes</h4>
             <span className="p-input-icon-left " >
                 <i className="pi pi-search" style={{marginTop:'-7px'}}/>
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Buscar..." />
             </span>
         </div>
     );
     const DataDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveData} />
+            <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Guardar" icon="pi pi-check" onClick={saveData} />
         </React.Fragment>
     );
     const deleteDataDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteDataDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteData} />
+            <Button label="Si" icon="pi pi-check" severity="danger" onClick={deleteData} />
         </React.Fragment>
     );
     const deleteDatasDialogFooter = (
@@ -332,13 +332,13 @@ const PreguntasPage = () => {
                 <DataTable ref={dt} value={Datas} 
                 // selection={selectedDatas} 
                 // onSelectionChange={(e) => setSelectedDatas(e.value)}
-                        dataKey="faq_id"  paginator rows={3} rowsPerPageOptions={[5, 10, 25]}
+                        dataKey="faq_id"  paginator rows={3} rowsPerPageOptions={[3,5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Datas" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Preguntas Frecuentes" globalFilter={globalFilter} header={header}>
                     
                     
                     <Column field="faq_id" header="Id" sortable style={{ minWidth: '16rem' }} body={idBodyTemplate}></Column>
-                    <Column field="category_id" header="Categoria" sortable style={{ minWidth: '12rem' }} body={idCategoryBodyTemplate}></Column>
+                    <Column field="category_id" header="Categoría" sortable style={{ minWidth: '12rem' }} body={idCategoryBodyTemplate}></Column>
                     <Column field="question" header="Preguntas frecuentes" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="answer" header="Respuestas"  sortable style={{ minWidth: '8rem' }} body={RepuestaBodyTemplate}></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '16rem' }}></Column>
@@ -351,13 +351,13 @@ const PreguntasPage = () => {
 
                <div className="field">
                     <label htmlFor="participant_status" className="font-bold">
-                        Categoria:
+                       Categoría:
                     </label>
                     <div className="card flex justify-content-center">
                         <Dropdown value={category.description} onChange={(e) => SelectCategoryChange(e.value,'category_id')} options={optionsCategory} optionLabel="name" placeholder="Select a Catagory" 
                             filter valueTemplate={selectedCategoryTemplate} itemTemplate={categoryOptionTemplate} className="w-full md:w-14rem" />
                     </div> 
-                    {submitted && !category.description && <small className="p-error">La Categoria es requerido.</small>}
+                    {submitted && !category.description && <small className="p-error">La Categoría es requerido.</small>}
                 </div>
 
                 <div className="field">
@@ -382,13 +382,13 @@ const PreguntasPage = () => {
                
             </Dialog>
 
-            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
+            <Dialog visible={deleteDataDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirmar" modal footer={deleteDataDialogFooter} onHide={hideDeleteDataDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem',marginRight:'1rem'}} />
                     
                     {Data && (
                         <span>
-                            Esta seguro de eliminar este evento <b>{Data.name}</b>?
+                             ¿Seguro que quieres eliminar esta pregunta: <b>{Data.question}</b>
                         </span>
                     )}
                 </div>
