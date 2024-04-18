@@ -19,11 +19,11 @@ const Sidebar = () => {
 
 
     const sidebarItems=[ 
-        {
-            name:"Dashboard",
-            href:"/Dashboard",
-            icon:MdDashboard,
-        },
+        // {
+        //     name:"Dashboard",
+        //     href:"/Dashboard",
+        //     icon:MdDashboard,
+        // },
         {
             name:"Preguntas Frecuentes",
             href:"/PreguntasFrecuentes",

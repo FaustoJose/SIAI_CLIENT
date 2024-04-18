@@ -11,14 +11,15 @@ import VideoCanvas from "./canvasVideo/canvas";
 import { FaMicrophone } from "react-icons/fa";
 import { FaInfoCircle } from "react-icons/fa";
 import { CiSaveUp2 } from "react-icons/ci";
-import { FaPlay } from "react-icons/fa";
+//import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
+import { CiSettings } from "react-icons/ci";
 //..........................................
 import 'primereact/resources/themes/saga-blue/theme.css'; // Tema de PrimeReact
 import 'primereact/resources/primereact.min.css';
 //..........................................
-import useGet from "./RestHooks/get";
+//import useGet from "./RestHooks/get";
 import usePostArt from "./RestHooks/PostApiArtificial";
 
 
@@ -259,6 +260,11 @@ const detener = () => {
             <div className="container">
                 <Link className="navbar-brand" href="/">Inicio</Link>
                 <Link className="navbar-brand" href={'/Eventos'} >Eventos</Link>
+                <Link className="navbar-brand" href={'/PreguntasFrecuentes'} >
+                <Form className="d-flex">
+                    <Button variant="outline-success" >Administrador<CiSettings /></Button>
+               </Form>
+               </Link>
                 {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
                 </button> */}
