@@ -260,7 +260,7 @@ const detener = () => {
             <div className="container">
                 <Link className="navbar-brand" href="/">Inicio</Link>
                 <Link className="navbar-brand" href={'/Eventos'} >Eventos</Link>
-                <Link className="navbar-brand" href={'/PreguntasFrecuentes'} >
+                <Link className="navbar-brand" href={'/PreguntasFrecuentes'} target="_blank" >
                 <Form className="d-flex">
                     <Button variant="outline-success" >Administrador<CiSettings /></Button>
                </Form>
