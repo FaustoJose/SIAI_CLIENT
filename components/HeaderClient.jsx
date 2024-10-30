@@ -21,7 +21,8 @@ import 'primereact/resources/primereact.min.css';
 //..........................................
 //import useGet from "./RestHooks/get";
 import usePostArt from "./RestHooks/PostApiArtificial";
-
+import usePost from './RestHooks/post';
+import AudioPlayer from './RestHooks/AudioPlayer';
 
 let datosMess={
     participant:'',
@@ -37,8 +38,12 @@ let datosMessAI={
 //     text:''
 // }
 
-let bodyArt={contents:[{parts:[{text:""}]}]}
+//let bodyArt={contents:[{parts:[{text:""}]}]}
+
+let bodyArt={content:''}
+
 const Navigation = () => {
+
     const [showVoz, setShowVoz] = useState(false);
     const [isRunning, setIsRunning] = useState(true);
     const [messages, setMessages] = useState(datosMess);
@@ -47,20 +52,25 @@ const Navigation = () => {
     const [Res,setRes]=useState(bodyArt)
     const [hablando, setHablando] = useState(false);
     const [precentacion, setPrecentacion] = useState(false);
-    //const [combinedMessages, setCombinedMessages] = useState([]);
+    
 
-    //const endPoint = 'Preguntas/';
-    //const {data:datas}=useGet(endPoint);
-    //const data=datas
+   
     const toast = useRef(null);
-    //const scrollPanelRef = useRef(null);
+   
     const chatRef = useRef(null);
-
-    const openModalVoz = () => {
+    const audioRef = useRef(null);
+//...................................
+const endPoint02 = 'textToSpeech/'
+//....................................
+const endPointName ='hablar/'
+const {fetchAudio} = AudioPlayer({audioRef,endPointName});
+//....................................
+    const openModalVoz = async () => {
       
         setShowVoz(true);
-        setPrecentacion(true)
-        decir('puedes preguntarme lo que quieras.')
+        
+         decir('¡Puedes preguntarme lo que quieras!...');
+         
     };
 
     
@@ -79,50 +89,107 @@ const Navigation = () => {
         }
       };
 
-     
-
+      useEffect(() => {
+        if (isRunning) { 
+          audioRef.current.pause();
+        }
+      }, [isRunning]);
+//...............................
+const handlePlay02 = () => {
+    if (audioRef.current) {
+      audioRef.current.play().catch((error) => {
+        console.error("Error al reproducir el audio:", error);
+      });
+    }
+  };
+  //...............................
 
 //console.log('como llamar la api de gemini',bodyArt.contents[0].parts[0].text);
      //...................................................
-     const decir=(name)=>{
-        if ('speechSynthesis' in window) {
+     const decir = async (text)=>{
+        const text01={
+            text:text
+         }
+        const audio = await usePost(endPoint02, text01);
+        // if ('speechSynthesis' in window) {
 
-            const voz = new SpeechSynthesisUtterance();
-            voz.lang="es-US";
-            voz.volume=1;
-            voz.pitch = 1;
-            voz.rate = 1;
-            const timer=setInterval(()=>{
-                const voices=speechSynthesis.getVoices();
-                if(voices.length!=0){
-                    voz.voice=voices[0];
-                    voz.voiceURI=voices[0].voiceURI;
-                    clearInterval(timer)
-                }
-                 //console.log(voices)
+        //     const voz = new SpeechSynthesisUtterance();
+        //     voz.lang="es-US";
+        //     voz.volume=10;
+        //     voz.pitch = 1;
+        //     voz.rate = 1;
+        //     const timer=setInterval(()=>{
+        //         const voices=speechSynthesis.getVoices();
+        //         if(voices.length!=0){
+        //             voz.voice=voices[0];
+        //             voz.voiceURI=voices[0].voiceURI;
+        //             clearInterval(timer)
+        //         }
+        //          //console.log(voices)
                  
-            },1000)
+        //     },1000)
 
-            voz.onend = () => {
-                // Establecer el estado de hablando a false cuando la síntesis de voz ha terminado
-                setHablando(false);
-                setPrecentacion(false);
-              };
+        //     voz.onend = () => {
+        //         // Establecer el estado de hablando a false cuando la síntesis de voz ha terminado
+        //         setHablando(false);
+        //         setPrecentacion(false);
+        //       };
+                if (text =='¡Puedes preguntarme lo que quieras!...'){
+                    setPrecentacion(true);
+                }
+                if(text !=='' && audio=='Audio file saved at Audios/output.mp3'){
+                    await fetchAudio();
+                    handlePlay02();
+                    //audioRef.current.play()
+                    setHablando(true);
+                
+                }
+        //       if (name !== '') {
+        //         // Eliminar los asteriscos del texto usando una expresión regular
+        //         const textoSinAsteriscos = name.replace(/\*/g, '');
+        //         voz.text = textoSinAsteriscos;
+        //         window.speechSynthesis.speak(voz);
+        //     }
 
-              if (name !== '') {
-                // Eliminar los asteriscos del texto usando una expresión regular
-                const textoSinAsteriscos = name.replace(/\*/g, '');
-                voz.text = textoSinAsteriscos;
-                window.speechSynthesis.speak(voz);
-            }
-
-        } else {
-            // El navegador no es compatible con la API de Web Speech
-            alert('El navegador no es compatible con la API de Web Speech');
-        }
+        // } else {
+        //     // El navegador no es compatible con la API de Web Speech
+        //     alert('El navegador no es compatible con la API de Web Speech');
+        // }
       };
     //......................................
+    const handlePlay = () => {
+        if (audioRef.current) {
+          audioRef.current.play();
+        }
+        setIsRunning(true);
+        setHablando(true);
+      };
+    
+      const handlePause = () => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
+      };
 
+     
+    //.................................................
+        const handleAudioEnded = () => {
+
+            setIsRunning(false)
+            setHablando(false);
+            handlePause()
+            setPrecentacion(false);
+            
+        };
+    
+    //......................................
+    const handleSpeak = () => {
+        setIsRunning(true);
+        decir(modalData.answer);
+        
+    };
+    //......................................
+      //......................................
     const isSpeechRecognitionSupported = () => {
         return 'webkitSpeechRecognition' in window;
     };
@@ -154,7 +221,7 @@ const Navigation = () => {
                     //setTranscript(speechToText);
                     const cleanText = speechToText.replace(/\?/g, ''); // Elimina todos los caracteres que no son palabras ni espacios
                     setResponse(prevMessages => [...prevMessages, {participant:'Tu', messages: cleanText }]);
-                    bodyArt.contents[0].parts[0].text = cleanText; // Utiliza el texto limpio
+                    bodyArt.content = cleanText; // Utiliza el texto limpio
                     setRes(bodyArt);
                     pasarDatos();
                     setIsRunning(true);
@@ -181,11 +248,11 @@ const Navigation = () => {
     const pasarDatos= async()=>{
  console.log('pregunta a la AI',Res)
         const Datos = await usePostArt(Res);
-        const data=Datos.candidates[0].content.parts[0].text;
-       
+        //const data=Datos.candidates[0].content.parts[0].text;
+        const data = Datos;
         
-        const dataModificada = data.replace(/Gemini/g,"SIAI");
-        const dataModificada02 = dataModificada.replace(/Google/g,"Programadores Informáticos");
+        const dataModificada = data.replace(/chatGPT/g,"SIAI");
+        const dataModificada02 = dataModificada.replace(/OpenAI/g,"Programadores Informáticos");
         let _dataRes = { ...dataRes };
 
         _dataRes[`participant`] = 'SIAI';
@@ -196,7 +263,7 @@ const Navigation = () => {
         setResponse(prev=>[...prev,_dataRes]);
 
         decir(dataModificada02);
-        setHablando(true);
+        //setHablando(true);
         //console.log('valor de data',Datos)
     }
 
@@ -206,7 +273,7 @@ const Navigation = () => {
         messages.participant='Tu';
         setResponse(prevMessages => [...prevMessages, messages]);
         setMessages(datosMess);
-        bodyArt.contents[0].parts[0].text = messages.messages;
+        bodyArt.content = messages.messages;
         setRes(bodyArt);
         pasarDatos();
         setIsRunning(true)
@@ -225,6 +292,7 @@ const detener = () => {
     window.speechSynthesis.cancel(); 
     setIsRunning(false)
     setHablando(false);
+    handlePause()
   };
 //..................................................................
  const info = () => {
@@ -233,6 +301,15 @@ const detener = () => {
  };
 //..................................................................
   return <div>
+
+            <div 
+            style={{display: 'none'}}
+            >
+                    <audio ref={audioRef} controls onEnded={handleAudioEnded}>
+                    </audio>
+               
+            </div>
+            
             <Toast ref={toast} position="top-center"/>
 
     <style>

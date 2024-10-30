@@ -13,6 +13,7 @@ const Sumar =()=>{
 }
    
 const Restar=()=>{
+    if(contador>5)
     setContador(contador-1);
 }
 

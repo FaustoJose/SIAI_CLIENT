@@ -1,8 +1,8 @@
 import axios from 'axios';
-
+import { API_URL } from '../URL';
 const usePostArt = async (body) => {
     //const endPoint = endPointName;
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAsDlRKZxcgkejtHSFqzbdx3je6uEep5Zc`;
+    const apiUrl = `${API_URL}chatGPT/`;
   
     try {
         

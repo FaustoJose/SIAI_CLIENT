@@ -40,13 +40,13 @@ useEffect(() => {
       
       <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
         <div style={{width: 0,height: 0, opacity: '0' }}>
-        {precentacion ?(<video  ref={videoRef}  src="/video/Preguntame .mp4" width='0' height='0' autoPlay muted={true}  loop={precentacion} />):(<video  ref={videoRef}  src={Hablando?"/video/Hablado.mp4":"/video/tranquilo.mp4"} width='0' height='0' autoPlay muted={true}  loop={Hablando||!Hablando} />)}
+        {precentacion ?(<video  ref={videoRef}  src="/video/Preguntame.mp4" width='0' height='0' autoPlay muted={true}  loop={precentacion} />):(<video  ref={videoRef}  src={Hablando?"/video/Hablando03.mp4":"/video/tranquilo.mp4"} width='0' height='0' autoPlay muted={true}  loop={Hablando||!Hablando} />)}
         </div>
        
           <canvas 
             ref={canvasRef} 
             width='640' 
-            height='360' 
+            height='640' 
             style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
           />
        

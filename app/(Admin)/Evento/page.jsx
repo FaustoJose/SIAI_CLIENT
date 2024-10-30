@@ -21,7 +21,7 @@ import { Calendar } from 'primereact/calendar';
 import { Badge } from 'primereact/badge';
 import { Card } from 'primereact/card';
 import { Dropdown } from 'primereact/dropdown';
-
+import * as XLSX from 'xlsx';
 //......................................
 import useGet from '@/components/RestHooks/get';
 import usePost from '@/components/RestHooks/post';
@@ -43,8 +43,10 @@ const EventoPage = () => {
     let emptyparticipantes = {
         participant_id: 0,
         event_id : 0,
+        Img_id :0,
         profetion_id:0,
-        participant_name: ''
+        participant_name: '',
+        academic_degree:''
     };
 
     const [Datas, setDatas] = useState(null);
@@ -60,18 +62,24 @@ const EventoPage = () => {
     const [date, setDate] = useState(null);
     const toast = useRef(null);
     const fileInputRef = useRef(null);
+    const imgInputRef = useRef(null);
     const dt = useRef(null);
 
     //.....................................................
     const [profs, setProfs] = useState([]);
     const [prof, setProf] = useState(emptyData2);
     //.....................................................
+    const [imgs, setImgs] = useState(null);
+    const [records, setRecords] = useState([]);
+    //.....................................................
     const endPointParticipantes = 'ParticipantesEvento/';
     const endPoint03 = 'Profesion/';
     const endPoint = 'RegistroEventos/';
+    const endPoint04 = 'UploadImg/';
+    const endPoint05 = 'ImgParticipante/';
     const { data: datas } = useGet(endPoint); 
     const { data: profecion } = useGet(endPoint03); 
-
+    const { data: datas04} = useGet(endPoint05);
   useEffect(() => {
     if (datas) {
       setDatas(datas); 
@@ -84,6 +92,11 @@ const EventoPage = () => {
     }
   }, [profecion]);
 
+  useEffect(() => {
+    if (datas04) {
+        setImgs(datas04); 
+    }
+  }, [datas04]);
     
  
     const openNew = () => {
@@ -151,45 +164,111 @@ const EventoPage = () => {
          }
     };
 
-    const saveFile=()=>{
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            processRecords(jsonData);
+          };
+          reader.readAsArrayBuffer(file);
+        }
+      };
+    
+      const processRecords = (data) => {
+        const processedData = data.map(record => ({
+          participant_name: record.Nombre+'_'+record.Matrícula,
+          academic_degree: record.Honor,
+        }));
+        setRecords(processedData);
+      };
+      const saveFile = async () => {
         try {
-                let _Data='';
-                const fileList = fileInputRef.current.files;
-                if (fileList.length > 0) {
-                const file = fileList[0];
-                const reader = new FileReader();
-            
-                reader.onload = (e) => {
-                    const content = e.target.result;
-                    const names = content.split(',');
-            
-                    // Recorrer los nombres utilizando forEach
-                    names.forEach(async(name) => {
-                        emptyparticipantes.event_id=DataFile.event_id;
-                        emptyparticipantes.profetion_id=prof.profetion_id;
-                        emptyparticipantes.participant_name=name.trim()
-                    console.log(emptyparticipantes);
-                    _Data=emptyparticipantes;
-                    
-                        // Llama a usePost con el nombre del endpoint y el cuerpo de la solicitud
-                        const data = await usePost(endPointParticipantes, _Data);
-                        console.log('Datos enviados correctamente:', data);
-                    
-                       
-                    
-                    // Aquí puedes hacer lo que necesites con cada nombre
-                    });
-
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participantes Guardados', life: 3000 });
-
-                };
-            
-                reader.readAsText(file);
+            let _Imgs = [...imgs];
+    
+            const names = records.map(record => record.participant_name);
+    
+            const fileList = imgInputRef.current.files;
+    
+            if (fileList.length > 0) {
+                const fileNames = Array.from(fileList).map(file => file.name);
+                const cleanFileNames = fileNames.map(name => name.substring(0, name.lastIndexOf('.')));
+                const allNamesExist = names.every(name => cleanFileNames.includes(name));
+    
+                if (!allNamesExist) {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Not all required files are selected', life: 3000 });
+                    return;
                 }
+    
+                const formData = new FormData();
+    
+                Array.from(fileList).forEach(file => {
+                    formData.append('file', file);
+                });
+    
+                const imgResponse = await usePost(endPoint04, formData);
+                console.log('Imagenes enviadas correctamente:', imgResponse);
+    
+                // Procesar las respuestas de las imágenes enviadas
+                const imgRegistrations = await Promise.all(imgResponse.map(async img => {
+                    try {
+                        const imgReg = await usePost(endPoint05, img);
+                        console.log('Imagen registrada correctamente:', imgReg);
+                        return imgReg;
+                    } catch (error) {
+                        console.error('Error al registrar la imagen:', error);
+                        throw error; // Puedes manejar el error según tu lógica
+                    }
+                }));
+                console.log('datos imgregistro',imgRegistrations)
+                _Imgs = [..._Imgs,...imgRegistrations];
+                console.log('datos imgregistro _Imgs',_Imgs)
+                setImgs(_Imgs);
+            }
+    
+            // Procesar cada registro y enviarlos
+            await Promise.all(records.map(async record => {
+                try {
+                    console.log('datos imagen',imgs)
+                    const datosImg = imgs.find(item => {
+                        const data = item.Img_name;
+                        const CleanData = data.substring(0, data.lastIndexOf('.'));
+                        return CleanData === record.participant_name;
+                    });
+    
+                    if (!datosImg) {
+                        console.error(`No se encontró la imagen para ${record.participant_name}`);
+                        return;
+                    }
+    
+                    // Ejemplo de cómo podrías guardar los datos en el servidor
+                    const dataToSend = {
+                        event_id: DataFile.event_id,
+                        Img_id: datosImg.Img_id,
+                        profetion_id: prof.profetion_id,
+                        participant_name: record.participant_name,
+                        academic_degree: record.academic_degree
+                    };
+    
+                    const data = await usePost(endPointParticipantes, dataToSend);
+                    console.log('Datos enviados correctamente:', data);
+                } catch (error) {
+                    console.error('Error al enviar el registro:', error);
+                    throw error; // Puedes manejar el error según tu lógica
+                }
+            }));
+    
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participantes Guardados', life: 3000 });
+            setFileDialog(false);
         } catch (error) {
             console.error('Error al enviar los datos:', error);
         }
-    }
+    };
 
     const editData = (Data) => {
         setData({ ...Data });
@@ -474,10 +553,20 @@ const EventoPage = () => {
                 
                 <div className="field">
                     <label htmlFor="event_name" className="font-bold">
-                        {`Cargar Archivo (.txt) con los nombres de los participantes:`}
+                        {`Cargar Imagenes con los nombres de los participantes y sus matrículas:`}
                     </label>
                     <div className="card flex justify-content-center">
-                        <input type="file"   accept=".txt"  ref={fileInputRef} id="event_name"   required autoFocus  />
+                        <input type="file"   accept=".jpg" multiple  ref={imgInputRef} id="event_name"   required autoFocus  />
+                    </div>
+                    {submitted && !Data.event_name && <small className="p-error">El nombre es requerida.</small>}
+                </div>
+
+                <div className="field">
+                    <label htmlFor="event_name" className="font-bold">
+                        {`Cargar Archivo (Excel) con los nombres, matrículas y honor de los participantes:`}
+                    </label>
+                    <div className="card flex justify-content-center">
+                        <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} id="event_name"   required autoFocus  />
                     </div>
                     {submitted && !Data.event_name && <small className="p-error">El nombre es requerida.</small>}
                 </div>

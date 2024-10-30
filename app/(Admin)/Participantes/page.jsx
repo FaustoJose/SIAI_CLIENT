@@ -26,14 +26,19 @@ import usePost from '@/components/RestHooks/post';
 import usePut from '@/components/RestHooks/put';
 import useDelete from '@/components/RestHooks/delete';
 import useGetById from '@/components/RestHooks/getById';
+import ImageComponent from '@/components/ImgComponent/ImageComponent';
 
 const ParticipantePage = () => {
+
     let emptyData = {
         participant_id: 0,
         event_id : 0,
+        Img_id :0,
         profetion_id:0,
-        participant_name: ''
+        participant_name: '',
+        academic_degree: ''
     };
+
     let emptyData1 = {
         event_id: 0,
         event_name: '',
@@ -46,6 +51,12 @@ const ParticipantePage = () => {
         description: ''
     };
 
+    let emptyData3 = {
+        Img_id: 0,
+        Img_name: '',
+        Img_type:''
+    };
+
     const [Datas, setDatas] = useState(null);
     const [DataDialog, setDataDialog] = useState(false);
     const [deleteDataDialog, setDeleteDataDialog] = useState(false);
@@ -55,6 +66,7 @@ const ParticipantePage = () => {
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
     const toast = useRef(null);
+    const fileInputRef = useRef(null);
     const dt = useRef(null);
 
     const [events, setEvents] = useState([]);
@@ -63,14 +75,20 @@ const ParticipantePage = () => {
     const [profs, setProfs] = useState([]);
     const [prof, setProf] = useState(emptyData2);
 //.....................................................
-
+    const [imgs, setImgs] = useState(null);
+    const [img, setImg] = useState(emptyData3);
+//.....................................................
 
     const endPoint = 'ParticipantesEvento/';
     const endPoint02 = 'RegistroEventos/';
     const endPoint03 = 'Profesion/';
+    const endPoint04 = 'UploadImg/';
+    const endPoint05 = 'ImgParticipante/';
     const { data: datas } = useGet(endPoint); 
     const { data: datas02} = useGet(endPoint02); 
     const { data: datas03} = useGet(endPoint03); 
+    const { data: datas04} = useGet(endPoint05); 
+    
 //.............................................
   useEffect(() => {
     if (datas) {
@@ -89,6 +107,13 @@ useEffect(() => {
         setProfs(datas03); 
     }
   }, [datas03]);
+    
+//...............................................
+useEffect(() => {
+    if (datas04) {
+        setImgs(datas04); 
+    }
+  }, [datas04]);
     
 //...............................................
     const openNew = () => {
@@ -118,7 +143,9 @@ useEffect(() => {
          if (Data.participant_name.trim()) {
             let _Datas = [...Datas];
             let _Data = { ...Data };
-
+            let _Data02 ={...Data};
+            let _Imgs = [...imgs];
+            let _Img={...img}
             if (Data.participant_id) {
                 try {
                     // Llama a usePost con el nombre del endpoint y el cuerpo de la solicitud
@@ -128,6 +155,31 @@ useEffect(() => {
                     if (index !== -1) {
                         _Datas[index] = { ..._Data };
                     }
+                    //.............................................
+                    const file = fileInputRef.current.files[0];
+                    const filename = file.name;
+                    console.log('file name',filename,file)
+                    if (!file) {
+                    alert('Please select a file first!');
+                    return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('file', file); 
+
+                    const img = await usePut(endPoint04,_Img.Img_name,formData);
+
+                    _Img.Img_name=img.Img_name;
+                    _Img.Img_type=img.Img_type;
+                    const imgReg = await usePut(endPoint05,_Img.Img_id,_Img);
+                    console.log('Datos actualizados correctamente:', imgReg);
+                    const index01 = _Imgs.findIndex(item => item.Img_id === _Img.Img_id);
+                    if (index01 !== -1) {
+                        _Imgs[index01] = { ..._Img };
+                    }
+                   
+                    //.............................................
+                   
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participante Actualizado', life: 3000 });
                 } catch (error) {
                     console.error('Error al enviar los datos:', error);
@@ -136,9 +188,35 @@ useEffect(() => {
             } else {
                 try {
                     // Llama a usePost con el nombre del endpoint y el cuerpo de la solicitud
+
+                    const file = fileInputRef.current.files[0];
+                    if (!file) {
+                    alert('Please select a file first!');
+                    return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('file', file); // Asegúrate de que 'file' es el nombre del campo
+
+                    const img = await usePost(endPoint04,formData);
+                    //.............................................
+
+                    console.log('datos de imagen jaja',img)
+
+                   
+
+                    const imgs = await usePost(endPoint05,img[0]);
+                    _Imgs=[..._Imgs,imgs];
+
+                    //.............................................
+                    _Data.Img_id = imgs.Img_id;
+                    console.log('id Imagen data',_Data.Img_id)
                     const data = await usePost(endPoint, _Data);
                     console.log('Datos enviados correctamente:', data);
                     _Datas = [..._Datas, data ];
+
+                    //.............................................
+                   
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participante Creado', life: 3000 });
                 } catch (error) {
                     console.error('Error al enviar los datos:', error);
@@ -148,6 +226,7 @@ useEffect(() => {
             }
     
             setDatas(_Datas);
+            setImgs(_Imgs)
             setDataDialog(false);
             setData(emptyData);
             
@@ -162,8 +241,12 @@ useEffect(() => {
         const datosProf = profs.filter(item => item.profetion_id === Data.profetion_id);
         const datosP=datosProf[0];
         //.........................................
+        const datosImg = imgs.filter(item => item.Img_id === Data.Img_id);
+        const datosI=datosImg[0];
+        //.........................................
         setProf({...datosP});
         setEvent({ ...datosE});
+        setImg({...datosI});
         setData({ ...Data });
         setDataDialog(true);
     };
@@ -176,10 +259,29 @@ useEffect(() => {
     const deleteData = async() => {
         try {
            
+           
+            //................................................
+            // console.log('fotoss',imgs)
+            // console.log('data img id',Data.Img_id)
+            const imagen = imgs.filter((item)=>item.Img_id===Data.Img_id);
+            // console.log('Datos imagen',imagen)
+            // console.log('Datos imagen',imagen[0].Img_name)
+            const imgDelete = await useDelete(endPoint04,imagen[0].Img_name)
+            console.log(imgDelete)
+            //......................................................
             const data = await useDelete(endPoint,Data.participant_id)
             //console.log('Datos eliminados correctamente:', data);
+
+            //........................................
+            const imgRegDelete = await useDelete(endPoint05,Data.Img_id)
+            console.log(imgRegDelete)
+            //.................................................
+            
             let _Datas = Datas.filter((val) => val.participant_id !== data.participant_id);
+            let _imgs = imgs.filter((val) => val.Img_id !== imgRegDelete.Img_id);
             setDatas(_Datas);
+            setImgs(_imgs);
+
             setDeleteDataDialog(false);
             setData(emptyData);
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Participante Borrado', life: 3000 });
@@ -233,6 +335,21 @@ useEffect(() => {
         _prof.description = val;
         setProf(_prof);
     };
+
+    const SelectHonorChange = (e,name) => {
+        console.log('datos de e y name',e,name)
+    const datosProf = profs.filter(item => item.description === e);
+    console.log('datosde Prof',datosProf)
+
+    const val = (e) || '';
+    let _Data = { ...Data };
+    _Data[`${name}`] = val;
+    setData(_Data);
+    
+    // let _prof = { ...prof };
+    // _prof.description = val;
+    // setProf(_prof);
+};
    
 
     const leftToolbarTemplate = () => {
@@ -249,7 +366,7 @@ useEffect(() => {
         return (
           <div  style={{ marginTop: '20px' }}>
           
-                <span  style={{ margin: '0.5rem 0', display: 'block' }}>
+                <span style={{ margin: '1.5rem ', display: 'block' }}>
                    {participant_name}
                 </span>
            
@@ -260,6 +377,17 @@ useEffect(() => {
 
     const idBodyTemplate = (rowData) => {
         return <Badge value={rowData.participant_id} size="large" ></Badge>;
+    };
+
+    const idImgTemplate = (rowData) => {
+
+        const regImg = imgs.filter((item) => item.Img_id === rowData.Img_id);
+       
+        if (regImg.length === 0) return <div>No image found</div>;
+
+        const imgName = regImg[0].Img_name;
+        
+        return <ImageComponent endPointName={endPoint04} imgName={imgName} />;
     };
 
     const idEventoBodyTemplate = (rowData) => {
@@ -276,6 +404,8 @@ useEffect(() => {
 
       return <div><p>{result.event_name}</p></div>
   };
+
+
    
   const idProfesionBodyTemplate = (rowData) => {
     let data = [];
@@ -292,6 +422,18 @@ useEffect(() => {
     return <div><p>{result.description}</p></div>
 };
 
+const NombresBodyHonor = ({academic_degree}) => {
+        
+    return (
+      <div  style={{ marginTop: '20px' }}>
+      
+            <span  style={{ margin: '1.5rem ', display: 'block' }}>
+               {academic_degree}
+            </span>
+       
+      </div>
+    );
+  };
   
 
     const actionBodyTemplate = (rowData) => {
@@ -332,6 +474,15 @@ useEffect(() => {
         value: item.event_name,
     }));
 
+    const optionsHonor = [{
+        value: "Summa Cum Laude"
+    },{
+        value: "Magna Cum Laude"
+    },{
+        value: "Cum Laude"
+    },{
+        value: "None"
+    }];
     
       
     const selectedEventTemplate = (option, props) => {
@@ -399,8 +550,10 @@ const profOptionTemplate = (option) => {
                     
                     
                     <Column field="participant_id" header="Id" sortable style={{ minWidth: '8rem' }} body={idBodyTemplate}></Column>
+                    <Column field="Img_id" header="Imagen" sortable style={{ minWidth: '8rem' }} body={idImgTemplate}></Column>
                     <Column field="participant_name" header="Nombres Participantes" sortable style={{ minWidth: '16rem' }} body={NombresBodyTemplate}></Column>
                     <Column field="profetion_id" header="Profesión" sortable style={{ minWidth: '8rem' }} body={idProfesionBodyTemplate}></Column>
+                    <Column field="academic_degree" header="Honor" sortable style={{ minWidth: '8rem' }} body={NombresBodyHonor}></Column>
                     <Column field="event_id" header="Evento" sortable style={{ minWidth: '8rem' }} body={idEventoBodyTemplate}></Column>
 
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
@@ -409,6 +562,16 @@ const profOptionTemplate = (option) => {
             </div>
 
             <Dialog visible={DataDialog} style={{ width: '32rem'}} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Participante" modal className="p-fluid" footer={DataDialogFooter} onHide={hideDialog}>
+
+                <div className="field">
+                    <label htmlFor="Img_id" className="font-bold">
+                        <div>Imagen:</div>
+                    </label>
+                    <div className="card flex justify-content-center">
+                        <input type="file"  accept=".jpg"  ref={fileInputRef} id="Img_id"   required autoFocus  />
+                    </div>
+                    {submitted && !Data.event_name && <small className="p-error">La imagen es requerida.</small>}
+                </div>
 
                 <div className="field">
                     <label htmlFor="participant_name" className="font-bold">
@@ -420,6 +583,8 @@ const profOptionTemplate = (option) => {
                     {submitted && !Data.participant_name && <small className="p-error">Este campo es requerida.</small>}
                 </div>
 
+               
+
                 <div className="field">
                     <label htmlFor="participant_status" className="font-bold">
                         Profesion:
@@ -430,7 +595,16 @@ const profOptionTemplate = (option) => {
                     </div> 
                     {submitted && !prof.description && <small className="p-error">La Profecion es requerido.</small>}
                 </div>
-
+                <div className="field">
+                    <label htmlFor="participant_status" className="font-bold">
+                        Honor:
+                    </label>
+                    <div className="card flex justify-content-center">
+                        <Dropdown value={Data.academic_degree} onChange={(e) => SelectHonorChange(e.value,'academic_degree')} options={optionsHonor} optionLabel="name" placeholder="Select a Honor" 
+                            filter valueTemplate={selectedProfTemplate} itemTemplate={profOptionTemplate} className="w-full md:w-14rem" />
+                    </div> 
+                    {submitted && !Data.description && <small className="p-error">El Honor es requerido.</small>}
+                </div>
                 <div className="field">
                     <label htmlFor="participant_status" className="font-bold">
                         Eventos:
